@@ -1,4 +1,4 @@
-import logo1 from "../../assets/logo1.png";
+import logo2 from "../../assets/logo2.png";
 
 import { BiBook } from "react-icons/bi"; // Import Flashcards icon
 import { MdHomeFilled } from "react-icons/md";
@@ -42,11 +42,11 @@ const Sidebar = () => {
       <div className="sticky top-0 left-0 h-screen flex flex-col border-r border-gray-300 w-20 md:w-full bg-[#FFF9E5]"> {/* Very light yellow background */}
         {/* Logo */}
         <Link to="/" className="flex justify-center md:justify-start">
-          <img
-            src={logo1}
-            alt="Logo"
-            className="px-2 w-28 h-auto rounded-full hover:bg-[#FFF4CC] hover:scale-105 transition-transform duration-300" // Light yellow shade for hover
-          />
+        <img
+          src={logo2}
+          alt="Logo"
+          className="px-2 w-36 h-32 rounded-full hover:bg-[#FFF4CC] hover:scale-x-110 hover:scale-y-105 transition-transform duration-300"
+        />
         </Link>
 
         {/* Navigation Links */}

@@ -72,7 +72,7 @@ const CreatePost = () => {
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>
 				<textarea
 					className='textarea w-full p-0 text-lg resize-none border-none focus:outline-none border-gray-800 rounded-none' // Added 'rounded-none' to remove rounded corners
-					placeholder='What is happening?!'
+					placeholder='Have a doubt? Ask here!'
 					value={text}
 					onChange={(e) => setText(e.target.value)}
 				/>
