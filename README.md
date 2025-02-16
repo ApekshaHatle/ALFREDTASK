@@ -6,9 +6,12 @@ The Flashcard Learning App is built with the MERN stack (MongoDB, Express.js, Re
 ## 🚀 Project Overview
 
 The app allows users to:
+* Login and Register with proper authentication using jwt tokens
 * Create, review, and manage flashcards.
 * Progress through flashcards based on their performance.
 * Follow a structured learning process with spaced repetition intervals.
+* Users can post their doubts on the community which can be seen by all
+* CRUD operations can be performed on the flashcards and posts
 
 ## 🏗️ Tech Stack
 
