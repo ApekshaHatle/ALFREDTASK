@@ -1,3 +1,4 @@
+
 import Flashcard from "../models/flashcards.model.js";
 import User from "../models/user.model.js";
 
@@ -6,15 +7,13 @@ export const createFlashcard = async (req, res) => {
         const { question, answer } = req.body;
         const userId = req.user._id.toString();
 
-        // Check if user exists
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
 
-        // Create and save the flashcard
         const newFlashcard = new Flashcard({
-            user: userId, // Use `user` to match the schema
+            user: userId,
             question,
             answer,
             box: 1,
@@ -28,15 +27,17 @@ export const createFlashcard = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 export const getDueFlashcards = async (req, res) => {
     try {
         const userId = req.user._id;
         const currentDate = new Date();
 
+        // Get all flashcards that are due for review
         const flashcards = await Flashcard.find({
             user: userId,
             nextReviewDate: { $lte: currentDate }
-        });
+        }).sort({ nextReviewDate: 1 }); // Sort by earliest due date first
 
         res.status(200).json(flashcards);
     } catch (error) {
@@ -45,39 +46,16 @@ export const getDueFlashcards = async (req, res) => {
     }
 };
 
-export const getAllFlashcards = async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const flashcards = await Flashcard.find({ userId });
-        res.status(200).json(flashcards);
-    } catch (error) {
-        console.log("Error in getAllFlashcards function", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-};
-// In flashcard.controller.js
 export const updateFlashcard = async (req, res) => {
     try {
         const { id } = req.params;
         const { isCorrect } = req.body;
-        const userId = req.user._id; // Add console.log here
-        console.log("Update flashcard request:", {
-            cardId: id,
-            userId: userId,
-            isCorrect: isCorrect
-        });
+        const userId = req.user._id;
 
-        const flashcard = await Flashcard.findOne({ _id: id, userId });
+        const flashcard = await Flashcard.findOne({ _id: id, user: userId });
         if (!flashcard) {
-            console.log("Flashcard not found for:", { id, userId });
             return res.status(404).json({ error: "Flashcard not found" });
         }
-
-        // Add logging for Leitner System
-        console.log("Before update:", {
-            currentBox: flashcard.box,
-            nextReviewDate: flashcard.nextReviewDate
-        });
 
         // Leitner System Logic
         if (isCorrect) {
@@ -86,23 +64,20 @@ export const updateFlashcard = async (req, res) => {
             flashcard.box = 1;
         }
 
-        // Calculate next review date
+        // Calculate next review date based on box number
         const today = new Date();
         const reviewIntervals = {
-            1: 0,    // Today
-            2: 2,    // 2 days
-            3: 5,    // 5 days
-            4: 9,    // 9 days
-            5: 14    // 14 days
+            1: 1,     // Every day
+            2: 2,     // Every other day
+            3: 7,     // Once a week
+            4: 14,    // Every other week
+            5: 30     // Once a month
         };
 
+        // Set hours to beginning of day to ensure consistent timing
+        today.setHours(0, 0, 0, 0);
         today.setDate(today.getDate() + reviewIntervals[flashcard.box]);
         flashcard.nextReviewDate = today;
-
-        console.log("After update:", {
-            newBox: flashcard.box,
-            newReviewDate: flashcard.nextReviewDate
-        });
 
         const updatedFlashcard = await flashcard.save();
         res.status(200).json(updatedFlashcard);
@@ -111,42 +86,56 @@ export const updateFlashcard = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
+export const getAllFlashcards = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const flashcards = await Flashcard.find({ user: userId });
+        res.status(200).json(flashcards);
+    } catch (error) {
+        console.log("Error in getAllFlashcards function", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
 export const deleteFlashcard = async (req, res) => {
     try {
         const { id } = req.params;
         const userId = req.user._id;
         
-        console.log("Delete flashcard request:", {
-            cardId: id,
-            userId: userId
-        });
-
-        const deletedFlashcard = await Flashcard.findOneAndDelete({ _id: id, userId });
-
+        const deletedFlashcard = await Flashcard.findOneAndDelete({ _id: id, user: userId });
         if (!deletedFlashcard) {
-            console.log("Flashcard not found for deletion:", { id, userId });
             return res.status(404).json({ error: "Flashcard not found" });
         }
 
-        console.log("Successfully deleted flashcard:", deletedFlashcard);
         res.status(200).json({ message: "Flashcard deleted successfully" });
     } catch (error) {
         console.log("Error in deleteFlashcard function:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 export const getFlashcardStats = async (req, res) => {
     try {
         const userId = req.user._id;
 
         const stats = await Flashcard.aggregate([
-            { $match: { userId: userId } },
+            { $match: { user: userId } },
             {
                 $group: {
                     _id: null,
                     totalCards: { $sum: 1 },
                     cardsPerBox: {
                         $push: { box: "$box" }
+                    },
+                    dueCards: {
+                        $sum: {
+                            $cond: [
+                                { $lte: ["$nextReviewDate", new Date()] },
+                                1,
+                                0
+                            ]
+                        }
                     }
                 }
             },
@@ -154,6 +143,7 @@ export const getFlashcardStats = async (req, res) => {
                 $project: {
                     _id: 0,
                     totalCards: 1,
+                    dueCards: 1,
                     boxStats: {
                         $map: {
                             input: [1, 2, 3, 4, 5],
@@ -173,7 +163,7 @@ export const getFlashcardStats = async (req, res) => {
             }
         ]);
 
-        res.status(200).json(stats[0] || { totalCards: 0, boxStats: [0, 0, 0, 0, 0] });
+        res.status(200).json(stats[0] || { totalCards: 0, dueCards: 0, boxStats: [0, 0, 0, 0, 0] });
     } catch (error) {
         console.log("Error in getFlashcardStats function", error.message);
         res.status(500).json({ error: "Internal Server Error" });

@@ -58,9 +58,20 @@ const FlashcardsPage = () => {
         }
     };
 
-    const handleDelete = (id) => {
-        queryClient.invalidateQueries(['flashcards']);
-        queryClient.invalidateQueries(['flashcardStats']);
+    const handleDelete = async (id) => {
+        try {
+            const res = await fetch(`/api/flashcards/${id}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+            
+            queryClient.invalidateQueries(['flashcards']);
+            queryClient.invalidateQueries(['flashcardStats']);
+            toast.success('Flashcard deleted successfully!');
+        } catch (error) {
+            toast.error(error.message);
+        }
     };
 
     if (isLoadingCards || isLoadingStats) {
@@ -70,6 +81,17 @@ const FlashcardsPage = () => {
             </div>
         );
     }
+
+    const getBoxDescription = (index) => {
+        const descriptions = [
+            'Every day',
+            'Every 2 days',
+            'Weekly',
+            'Bi-weekly',
+            'Monthly'
+        ];
+        return descriptions[index];
+    };
 
     return (
         <div className="flex-1 max-w-4xl mx-auto p-4">
@@ -121,12 +143,15 @@ const FlashcardsPage = () => {
                         {stats?.boxStats?.map((count, index) => (
                             <div key={index} className="text-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
                                 <div className="font-medium">Box {index + 1}</div>
+                                <div className="text-xs text-gray-600 dark:text-gray-400">
+                                    {getBoxDescription(index)}
+                                </div>
                                 <div className="text-lg">{count}</div>
                             </div>
                         ))}
                     </div>
                     <div className="mt-4 text-center text-gray-600 dark:text-gray-400">
-                        {flashcards?.length} cards due for review today
+                        {stats?.dueCards || 0} cards due for review today
                     </div>
                 </div>
             </div>
@@ -141,7 +166,7 @@ const FlashcardsPage = () => {
                 ))}
             </div>
 
-            {flashcards?.length === 0 && (
+            {(!flashcards || flashcards.length === 0) && (
                 <div className="text-center py-10 text-gray-500">
                     No flashcards due for review! Time for a break 🎉
                 </div>
