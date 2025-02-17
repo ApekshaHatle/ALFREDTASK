@@ -3,8 +3,7 @@ import User from "../models/user.model.js";
 
 // Add testing toggle and test date at the top of the file
 const testing = true; // Set to false when done testing
-const testDate = new Date('2024-02-17'); // Change this date for testing
-
+const testDate = new Date('2024-02-19'); // Change this date for testing
 
 // Helper function to get end of day
 const getEndOfDay = (date) => {
@@ -15,7 +14,7 @@ const getEndOfDay = (date) => {
 
 export const createFlashcard = async (req, res) => {
     try {
-        const { question, answer } = req.body;
+        const { question, answer, img } = req.body;
         const userId = req.user._id.toString();
 
         const user = await User.findById(userId);
@@ -27,6 +26,7 @@ export const createFlashcard = async (req, res) => {
             user: userId,
             question,
             answer,
+            img,
             box: 1,
             nextReviewDate: testing ? testDate : new Date(),
         });
@@ -56,10 +56,11 @@ export const getDueFlashcards = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 export const updateFlashcard = async (req, res) => {
     try {
         const { id } = req.params;
-        const { isCorrect } = req.body;
+        const { isCorrect, img } = req.body;
         const userId = req.user._id;
 
         const flashcard = await Flashcard.findOne({ _id: id, user: userId });
@@ -71,6 +72,10 @@ export const updateFlashcard = async (req, res) => {
             flashcard.box = Math.min(flashcard.box + 1, 5);
         } else {
             flashcard.box = 1;
+        }
+
+        if (img) {
+            flashcard.img = img;
         }
 
         const today = testing ? new Date(testDate) : new Date();
@@ -94,7 +99,6 @@ export const updateFlashcard = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
 
 export const getAllFlashcards = async (req, res) => {
     try {

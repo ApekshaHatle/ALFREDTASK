@@ -52,8 +52,8 @@ const Flashcard = ({ flashcard, onDelete }) => {
     };
 
     return (
-        <div className="bg-white dark:bg-gray-100 rounded-lg shadow-lg p-6 m-4 max-w-md w-full">
-            <div className="relative">
+        <div className="bg-white dark:bg-gray-100 rounded-lg shadow-lg p-6 m-4 max-w-md w-full flex flex-col">
+            <div className="relative flex flex-col justify-between flex-grow">
                 <div className="absolute top-2 right-2 flex gap-2">
                     <button
                         onClick={handleDelete}
@@ -69,13 +69,26 @@ const Flashcard = ({ flashcard, onDelete }) => {
                     Box {flashcard.box} • Next review: {new Date(flashcard.nextReviewDate).toLocaleDateString()}
                 </div>
 
-                <div className="min-h-[150px] flex items-center justify-center">
+                <div className="flex flex-col justify-center items-center flex-grow">
+                    {/* Display question text */}
                     <p className="text-lg text-center text-gray-700 dark:text-gray-800">
                         {isFlipped ? flashcard.answer : flashcard.question}
                     </p>
+                    
+                    {/* Display image if it exists and the card is not flipped */}
+                    {flashcard.img && !isFlipped && (
+                        <div className="mt-4 mb-4 w-full">
+                            <img
+                                src={flashcard.img}
+                                alt="Flashcard visual"
+                                className="w-full h-[200px] rounded-lg object-cover"  // Set width to 100% and fixed height
+                            />
+                        </div>
+                    )}
                 </div>
 
-                <div className="mt-4 space-y-2">
+                {/* Ensure this part stays at the bottom */}
+                <div className="mt-4 space-y-2 w-full">
                     {!isFlipped ? (
                         <button
                             onClick={() => setIsFlipped(true)}
@@ -85,7 +98,7 @@ const Flashcard = ({ flashcard, onDelete }) => {
                         </button>
                     
                     ) : (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 w-full">
                             <button
                                 onClick={() => handleAnswer(false)}
                                 disabled={isLoading}

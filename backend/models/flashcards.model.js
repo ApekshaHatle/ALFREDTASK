@@ -16,6 +16,9 @@ const flashcardSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    img:{
+        type:String,
+    },
     box: {
         type: Number,
         default: 1,

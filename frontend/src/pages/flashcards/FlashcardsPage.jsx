@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Flashcard from '../../components/common/Flashcard';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { CiImageOn } from "react-icons/ci";
+import { IoCloseSharp } from "react-icons/io5";
 
 const FlashcardsPage = () => {
     const [newQuestion, setNewQuestion] = useState('');
     const [newAnswer, setNewAnswer] = useState('');
     const [showForm, setShowForm] = useState(false);
+    const [img, setImg] = useState(null);
+    const imgRef = useRef(null);
     const queryClient = useQueryClient();
 
     const { data: flashcards, isLoading: isLoadingCards } = useQuery({
@@ -40,7 +44,8 @@ const FlashcardsPage = () => {
                 },
                 body: JSON.stringify({
                     question: newQuestion,
-                    answer: newAnswer
+                    answer: newAnswer,
+                    img: img
                 })
             });
 
@@ -49,6 +54,7 @@ const FlashcardsPage = () => {
 
             setNewQuestion('');
             setNewAnswer('');
+            setImg(null);
             setShowForm(false);
             queryClient.invalidateQueries(['flashcards']);
             queryClient.invalidateQueries(['flashcardStats']);
@@ -65,12 +71,23 @@ const FlashcardsPage = () => {
             });
             const data = await res.json();
             if (data.error) throw new Error(data.error);
-            
+
             queryClient.invalidateQueries(['flashcards']);
             queryClient.invalidateQueries(['flashcardStats']);
             toast.success('Flashcard deleted successfully!');
         } catch (error) {
             toast.error(error.message);
+        }
+    };
+
+    const handleImgChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImg(reader.result);
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -128,12 +145,35 @@ const FlashcardsPage = () => {
                                 required
                             />
                         </div>
-                        <button
-                            type="submit"
-                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
-                        >
-                            Create Flashcard
-                        </button>
+
+                        {img && (
+                            <div className="relative w-72 mx-auto">
+                                <IoCloseSharp
+                                    className="absolute top-0 right-0 text-white bg-gray-800 rounded-full w-5 h-5 cursor-pointer"
+                                    onClick={() => {
+                                        setImg(null);
+                                        imgRef.current.value = null;
+                                    }}
+                                />
+                                <img src={img} className="w-full mx-auto h-72 object-contain rounded" alt="Uploaded" />
+                            </div>
+                        )}
+
+                        <div className="flex justify-between border-t py-2 border-t-gray-700">
+                            <div className="flex gap-1 items-center">
+                                <CiImageOn
+                                    className="fill-primary w-6 h-6 cursor-pointer"
+                                    onClick={() => imgRef.current.click()}
+                                />
+                            </div>
+                            <input type="file" accept="image/*" hidden ref={imgRef} onChange={handleImgChange} />
+                            <button
+                                type="submit"
+                                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+                            >
+                                Create Flashcard
+                            </button>
+                        </div>
                     </form>
                 )}
 
