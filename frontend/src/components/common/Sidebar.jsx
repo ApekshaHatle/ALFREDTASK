@@ -57,6 +57,16 @@ const Sidebar = () => {
 
           <li className="flex justify-center md:justify-start">
             <Link
+              to="/doubt-forum"
+              className="flex gap-3 items-center hover:bg-[#34495E] text-white transition-all rounded-lg duration-300 py-2 pl-3 pr-5 max-w-fit cursor-pointer"
+            >
+              <MdQuestionAnswer className="w-6 h-6 text-purple-200" /> {/* Light purple */}
+              <span className="text-lg hidden md:block">Doubt Forum</span>
+            </Link>
+          </li>
+
+          <li className="flex justify-center md:justify-start">
+            <Link
               to="/notifications"
               className="flex gap-3 items-center hover:bg-[#34495E] text-white transition-all rounded-lg duration-300 py-2 pl-3 pr-5 max-w-fit cursor-pointer"
             >
@@ -75,15 +85,7 @@ const Sidebar = () => {
             </Link>
           </li>
 
-          <li className="flex justify-center md:justify-start">
-            <Link
-              to="/doubt-forum"
-              className="flex gap-3 items-center hover:bg-[#34495E] text-white transition-all rounded-lg duration-300 py-2 pl-3 pr-5 max-w-fit cursor-pointer"
-            >
-              <MdQuestionAnswer className="w-6 h-6 text-purple-200" /> {/* Light purple */}
-              <span className="text-lg hidden md:block">Doubt Forum</span>
-            </Link>
-          </li>
+          
         </ul>
 
         {/* Profile Section */}
