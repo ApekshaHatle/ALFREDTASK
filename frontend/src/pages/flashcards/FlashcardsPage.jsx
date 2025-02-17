@@ -97,10 +97,10 @@ const FlashcardsPage = () => {
         <div className="flex-1 max-w-4xl mx-auto p-4">
             <div className="mb-8">
                 <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-2xl font-bold">Flashcards</h1>
+                    <h1 className="text-2xl font-extrabold text-orange-600">Flashcards</h1>
                     <button
                         onClick={() => setShowForm(!showForm)}
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                        className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition"
                     >
                         {showForm ? 'Cancel' : 'Add Flashcard'}
                     </button>
@@ -109,22 +109,22 @@ const FlashcardsPage = () => {
                 {showForm && (
                     <form onSubmit={handleCreateFlashcard} className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
                         <div className="mb-4">
-                            <label className="block text-sm font-medium mb-2">Question</label>
+                            <label className="block text-sm font-medium mb-2 text-teal-700 dark:text-teal-300">Question</label>
                             <input
                                 type="text"
                                 value={newQuestion}
                                 onChange={(e) => setNewQuestion(e.target.value)}
-                                className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-purple-300"
                                 required
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium mb-2">Answer</label>
+                            <label className="block text-sm font-medium mb-2 text-teal-700 dark:text-teal-300">Answer</label>
                             <input
                                 type="text"
                                 value={newAnswer}
                                 onChange={(e) => setNewAnswer(e.target.value)}
-                                className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-purple-300"
                                 required
                             />
                         </div>
@@ -138,11 +138,11 @@ const FlashcardsPage = () => {
                 )}
 
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6">
-                    <h2 className="text-lg font-semibold mb-2">Progress</h2>
+                    <h2 className="text-lg font-semibold text-teal-700 dark:text-teal-300 mb-2">Progress</h2>
                     <div className="grid grid-cols-5 gap-2">
                         {stats?.boxStats?.map((count, index) => (
                             <div key={index} className="text-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
-                                <div className="font-medium">Box {index + 1}</div>
+                                <div className="font-medium text-purple-600 dark:text-purple-300">Box {index + 1}</div>
                                 <div className="text-xs text-gray-600 dark:text-gray-400">
                                     {getBoxDescription(index)}
                                 </div>
@@ -167,7 +167,7 @@ const FlashcardsPage = () => {
             </div>
 
             {(!flashcards || flashcards.length === 0) && (
-                <div className="text-center py-10 text-gray-500">
+                <div className="text-center py-10 text-gray-500 dark:text-gray-400">
                     No flashcards due for review! Time for a break 🎉
                 </div>
             )}

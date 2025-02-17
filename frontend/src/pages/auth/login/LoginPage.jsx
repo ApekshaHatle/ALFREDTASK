@@ -48,20 +48,24 @@ const LoginPage = () => {
 	};
 
 	return (
-		<div className="max-w-screen-xl mx-auto flex h-screen px-10 bg-base-100">
-			<div className="flex-1 hidden lg:flex items-center justify-center">
+		<div className="max-w-screen-xl mx-auto flex h-screen px-10 bg-gray-50">
+			{/* Logo Section */}
+			<div className="flex-1 hidden lg:flex items-center justify-center bg-[#34495E] p-8 rounded-lg shadow-xl">
 				<img src={logo} alt="Logo" className="lg:w-2/3" />
 			</div>
-			<div className="flex-1 flex flex-col justify-center items-center">
-				<form className="lg:w-2/3 mx-auto md:mx-20 flex gap-4 flex-col" onSubmit={handleSubmit}>
-					<img src={logo} alt="Logo" className="w-24 lg:hidden" />
-					<h1 className="text-4xl font-extrabold text-primary">{"Let's"} go.</h1>
+			{/* Form Section */}
+			<div className="flex-1 flex flex-col justify-center items-center bg-white shadow-xl rounded-lg p-8">
+				<form className="lg:w-2/3 mx-auto md:mx-20 flex gap-6 flex-col" onSubmit={handleSubmit}>
+					{/* Logo (Mobile) */}
+					<img src={logo} alt="Logo" className="w-24 lg:hidden mb-6" />
+					<h1 className="text-4xl font-extrabold text-teal-700">{"Let's"} go.</h1>
 					
-					<label className="input input-bordered rounded flex items-center gap-2">
-						< MdOutlineMail className="text-secondary" />
+					{/* Input Fields */}
+					<label className="input input-bordered rounded-lg flex items-center gap-2 mb-6 shadow-md border-teal-200">
+						<MdOutlineMail className="text-teal-500" />
 						<input
 							type="text"
-							className="grow bg-transparent outline-none text-base-content"
+							className="grow bg-transparent outline-none text-gray-700"
 							placeholder="Username"
 							name="username"
 							onChange={handleInputChange}
@@ -69,11 +73,11 @@ const LoginPage = () => {
 						/>
 					</label>
 
-					<label className="input input-bordered rounded flex items-center gap-2">
-						<MdPassword className="text-accent" />
+					<label className="input input-bordered rounded-lg flex items-center gap-2 mb-6 shadow-md border-teal-200">
+						<MdPassword className="text-teal-500" />
 						<input
 							type="password"
-							className="grow bg-transparent outline-none text-base-content"
+							className="grow bg-transparent outline-none text-gray-700"
 							placeholder="Password"
 							name="password"
 							onChange={handleInputChange}
@@ -81,21 +85,26 @@ const LoginPage = () => {
 						/>
 					</label>
 
-					<button className="btn rounded-full btn-accent text-white">
+					{/* Login Button */}
+					<button className="btn bg-teal-600 text-white rounded-full hover:bg-teal-500 focus:outline-none transition duration-300 ease-in-out shadow-lg transform hover:scale-105">
 						{isPending ? "Loading..." : "Login"}
 					</button>
 
-					{isError && <p className="text-error">{error.message}</p>}
+					{/* Error Message */}
+					{isError && <p className="text-red-500 mt-2">{error.message}</p>}
 				</form>
 				
-				<div className="flex flex-col lg:w-2/3 gap-2 mt-4">
-					<p className="text-lg text-primary">{"Don't"} have an account?</p>
+				{/* Sign Up Section */}
+				<div className="flex flex-col lg:w-2/3 gap-2 mt-6">
+					<p className="text-lg text-teal-700">{"Don't"} have an account?</p>
 					<Link to="/signup">
-						<button className="btn rounded-full btn-outline btn-secondary w-full">
+						{/* Sign-up Button */}
+						<button className="btn btn-outline border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white rounded-full w-full py-3 transition duration-300 ease-in-out transform hover:scale-105">
 							Sign up
 						</button>
 					</Link>
 				</div>
+
 			</div>
 		</div>
 	);

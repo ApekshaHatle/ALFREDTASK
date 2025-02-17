@@ -52,12 +52,12 @@ const Flashcard = ({ flashcard, onDelete }) => {
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 m-4 max-w-md w-full">
+        <div className="bg-white dark:bg-gray-100 rounded-lg shadow-lg p-6 m-4 max-w-md w-full">
             <div className="relative">
                 <div className="absolute top-2 right-2 flex gap-2">
                     <button
                         onClick={handleDelete}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-500 hover:text-red-600 transition duration-200"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -65,12 +65,12 @@ const Flashcard = ({ flashcard, onDelete }) => {
                     </button>
                 </div>
                 
-                <div className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                <div className="mb-4 text-sm text-gray-600 dark:text-gray-700">
                     Box {flashcard.box} • Next review: {new Date(flashcard.nextReviewDate).toLocaleDateString()}
                 </div>
 
                 <div className="min-h-[150px] flex items-center justify-center">
-                    <p className="text-lg text-center">
+                    <p className="text-lg text-center text-gray-700 dark:text-gray-800">
                         {isFlipped ? flashcard.answer : flashcard.question}
                     </p>
                 </div>
@@ -79,23 +79,24 @@ const Flashcard = ({ flashcard, onDelete }) => {
                     {!isFlipped ? (
                         <button
                             onClick={() => setIsFlipped(true)}
-                            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+                            className="w-full bg-gradient-to-r from-[#2D3748] to-[#4A5568] text-white py-2 px-4 rounded hover:bg-gradient-to-r hover:from-[#2B6CB0] hover:to-[#3182CE] transition duration-200"
                         >
                             Show Answer
                         </button>
+                    
                     ) : (
                         <div className="flex gap-2">
                             <button
                                 onClick={() => handleAnswer(false)}
                                 disabled={isLoading}
-                                className="flex-1 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition disabled:opacity-50"
+                                className="flex-1 bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 transition duration-200 disabled:opacity-50"
                             >
                                 Got it Wrong
                             </button>
                             <button
                                 onClick={() => handleAnswer(true)}
                                 disabled={isLoading}
-                                className="flex-1 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition disabled:opacity-50"
+                                className="flex-1 bg-purple-400 text-white py-2 px-4 rounded hover:bg-purple-500 transition duration-200 disabled:opacity-50"
                             >
                                 Got it Right
                             </button>
