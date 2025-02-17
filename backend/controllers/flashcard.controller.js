@@ -1,6 +1,17 @@
-
 import Flashcard from "../models/flashcards.model.js";
 import User from "../models/user.model.js";
+
+// Add testing toggle and test date at the top of the file
+const testing = true; // Set to false when done testing
+const testDate = new Date('2024-02-17'); // Change this date for testing
+
+
+// Helper function to get end of day
+const getEndOfDay = (date) => {
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+    return endOfDay;
+};
 
 export const createFlashcard = async (req, res) => {
     try {
@@ -17,7 +28,7 @@ export const createFlashcard = async (req, res) => {
             question,
             answer,
             box: 1,
-            nextReviewDate: new Date(),
+            nextReviewDate: testing ? testDate : new Date(),
         });
 
         const savedFlashcard = await newFlashcard.save();
@@ -31,13 +42,13 @@ export const createFlashcard = async (req, res) => {
 export const getDueFlashcards = async (req, res) => {
     try {
         const userId = req.user._id;
-        const currentDate = new Date();
+        const currentDate = testing ? getEndOfDay(testDate) : getEndOfDay(new Date());
 
         // Get all flashcards that are due for review
         const flashcards = await Flashcard.find({
             user: userId,
             nextReviewDate: { $lte: currentDate }
-        }).sort({ nextReviewDate: 1 }); // Sort by earliest due date first
+        }).sort({ nextReviewDate: 1 });
 
         res.status(200).json(flashcards);
     } catch (error) {
@@ -45,7 +56,6 @@ export const getDueFlashcards = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
 export const updateFlashcard = async (req, res) => {
     try {
         const { id } = req.params;
@@ -57,15 +67,13 @@ export const updateFlashcard = async (req, res) => {
             return res.status(404).json({ error: "Flashcard not found" });
         }
 
-        // Leitner System Logic
         if (isCorrect) {
             flashcard.box = Math.min(flashcard.box + 1, 5);
         } else {
             flashcard.box = 1;
         }
 
-        // Calculate next review date based on box number
-        const today = new Date();
+        const today = testing ? new Date(testDate) : new Date();
         const reviewIntervals = {
             1: 1,     // Every day
             2: 2,     // Every other day
@@ -74,8 +82,8 @@ export const updateFlashcard = async (req, res) => {
             5: 30     // Once a month
         };
 
-        // Set hours to beginning of day to ensure consistent timing
-        today.setHours(0, 0, 0, 0);
+        // Set to end of day for consistent comparison
+        today.setHours(18, 30, 0, 0); // Setting to 18:30 UTC to match your data
         today.setDate(today.getDate() + reviewIntervals[flashcard.box]);
         flashcard.nextReviewDate = today;
 
@@ -86,6 +94,7 @@ export const updateFlashcard = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 
 export const getAllFlashcards = async (req, res) => {
     try {
@@ -118,6 +127,7 @@ export const deleteFlashcard = async (req, res) => {
 export const getFlashcardStats = async (req, res) => {
     try {
         const userId = req.user._id;
+        const currentDate = testing ? getEndOfDay(testDate) : getEndOfDay(new Date());
 
         const stats = await Flashcard.aggregate([
             { $match: { user: userId } },
@@ -131,7 +141,7 @@ export const getFlashcardStats = async (req, res) => {
                     dueCards: {
                         $sum: {
                             $cond: [
-                                { $lte: ["$nextReviewDate", new Date()] },
+                                { $lte: ["$nextReviewDate", currentDate] },
                                 1,
                                 0
                             ]
