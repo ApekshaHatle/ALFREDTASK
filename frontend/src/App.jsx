@@ -43,9 +43,9 @@ if(isLoading) {
 }
 
   return (
-    <div className="flex max-w-6xl mx-auto">
+    <div className="flex max-w-7xl mx-auto">
       {/*common componenet coz its not wrapped with routes*/}
-      {authUser && <Sidebar/>}
+      {authUser && <Sidebar className="w-100" />}
       <Routes>
         <Route path='/' element={authUser ? <FlashcardsPage/> : <Navigate to="/login" />}/>
         <Route path='/login' element={!authUser ? <LoginPage/> : <Navigate to="/" /> }/>

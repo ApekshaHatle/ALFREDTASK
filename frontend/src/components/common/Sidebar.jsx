@@ -32,8 +32,9 @@ const Sidebar = () => {
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
   return (
-    <div className="md:flex-[2_2_0] w-32 max-w-64 -ml-7 pl-6">
-      <div className="sticky top-0 left-0 h-screen flex flex-col border-r border-gray-200 w-20 md:w-full bg-[#2C3E50] shadow-lg"> {/* Dark background */}
+    <div className="md:flex-[2_2_0] w-32 max-w-64 ml-0 pl-6 min-w-[220px]"> {/* Set margin-left to 0 */}
+      <div className="sticky top-0 left-0 h-screen flex flex-col border-r border-gray-200 w-20 md:w-full bg-[#2C3E50] shadow-lg"> 
+        {/* Dark background */}
         {/* Logo */}
         <Link to="/" className="flex justify-center items-center pr-8">
           <img

@@ -35,6 +35,13 @@ const userSchema = new mongoose.Schema(
                 default: ""       //initially 0 followers
             },
         ],
+        streak: {
+            count: { type: Number, default: 0 },
+            lastCompletionDate: { type: Date },
+            lastCheckDate: { type: Date }
+        },
+
+        completedDates: [{ type: Date }],
         
         profileImg:{
             type: String,
